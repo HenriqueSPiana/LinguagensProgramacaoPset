@@ -44,9 +44,8 @@ class Imagem:
         # se está na linha 0 entao é vindo o valor da coluna somente
         return (linha *self.largura) + coluna
         
-
-
     def aplicar_por_pixel(self, func):
+        # foi necessario ajustes para que percorresse o vetor de forma correta
         resultado = Imagem.nova(self.largura,self.altura)
         for x in range(resultado.largura):
             for y in range(resultado.altura):
@@ -218,8 +217,15 @@ if __name__ == '__main__':
     # O código neste bloco só será executado quando você executar
     # explicitamente seu script e não quando os testes estiverem
     # sendo executados. Este é um bom lugar para gerar imagens, etc.
-    pass
 
+    # Diretório
+
+
+    im = Imagem.carregar(nome_arquivo='test_images/bluegill.png')
+    invertida = im.invertida() 
+    invertida.salvar('resultados/bluegill_invertida.png')
+                         
+    # pass
     # O código a seguir fará com que as janelas de Imagem.mostrar
     # sejam exibidas corretamente, quer estejamos executando
     # interativamente ou não:
