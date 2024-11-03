@@ -67,8 +67,15 @@ class TestInvertida(unittest.TestCase):
 
     def test_invertida_2(self):
         # Escreva aqui o seu caso de teste
-        self.assertTrue(False)
+        im = pset1.Imagem(4,1,[29,89,136,200])
+        resultado = im.invertida()
+        #  255 - valorDoPixel eu inverto ele
+        # logo os resultados esperados sao 226,166,119,200
+        esperado = pset1.Imagem(4,1,[226,166,119,55])
+        
+        self.assertEqual(resultado,esperado)
 
+        
     def test_imagens_invertidas(self):
         for nome_arquivo in ('mushroom', 'twocats', 'chess'):
             with self.subTest(f=nome_arquivo):

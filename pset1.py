@@ -31,27 +31,33 @@ class Imagem:
     def __init__(self, largura, altura, pixels):
         self.largura = largura
         self.altura = altura
-        self.pixels = pixels
+        self.pixels = pixels #row-major order
 
-    def get_pixel(self, x, y):
-        return self.pixels[x, y]
+    def get_pixel(self,pixel):
+        return self.pixels[pixel]
 
-    def set_pixel(self, x, y, c):
-        self.pixels[x, y] = c
+    def set_pixel(self, pixel,c):
+        self.pixels[pixel] = c
+
+    def converte_pixel(self,coluna,linha):
+        #para que eu consiga acessar realmente os pixels corretos, é preciso pular os pixels de acordo com a largura.
+        # se está na linha 0 entao é vindo o valor da coluna somente
+        return (linha *self.largura) + coluna
+        
+
 
     def aplicar_por_pixel(self, func):
-        resultado = Imagem.nova(self.altura, self.largura)
+        resultado = Imagem.nova(self.largura,self.altura)
         for x in range(resultado.largura):
-            nova_cor = ""
-            y = ""
             for y in range(resultado.altura):
-                cor = self.get_pixel(x, y)
+                pixel = self.converte_pixel(x,y)
+                cor = self.get_pixel(pixel)
                 nova_cor = func(cor)
-            resultado.set_pixel(y, x, nova_cor)
+                resultado.set_pixel(pixel, nova_cor)
         return resultado
 
     def invertida(self):
-        return self.aplicar_por_pixel(lambda c: 256 - c)
+        return self.aplicar_por_pixel(lambda c: 255 - c)
 
     def borrada(self, n):
         raise NotImplementedError
