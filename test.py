@@ -85,6 +85,51 @@ class TestInvertida(unittest.TestCase):
                 esperado = pset1.Imagem.carregar(arquivo_saida)
                 self.assertEqual(resultado,  esperado)
 
+# Classe para os testes do Kernel correlacao
+
+class TestCorrelacao(unittest.TestCase):
+    def test_correlacao_1(self):
+        kernel = pset1.kernel(3, 3, [0, 0, 0,
+                                  0, 1, 0,
+                                  0, 0, 0])
+        im = pset1.Imagem.carregar('test_images/centered_pixel.png')
+        resultado = im.correlacao(kernel)
+        esperado = pset1.Imagem(11, 11,
+                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                            0, 0, 0, 0, 0, 255, 0, 0, 0, 0, 0,
+                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(resultado, esperado)
+
+        
+    def test_correlacao_2(self):
+        kernel = pset1.kernel(5,5, [0, 0, 0, 0, 0,
+                                    0, 0, 0, 0, 0,
+                                    1, 0, 0, 0, 0,
+                                    0, 0, 0, 0, 0,
+                                    0, 0, 0, 0, 0])
+        im = pset1.Imagem.carregar('test_images/centered_pixel.png')
+        resultado = im.correlacao(kernel)
+        esperado = pset1.Imagem(11, 11,
+                             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0, 0, 0, 255, 0, 0, 0,
+                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(resultado, esperado)
 
 # Classe para os testes dos filtros:
 class TestFiltros(unittest.TestCase):

@@ -25,6 +25,22 @@ import tkinter
 from io import BytesIO
 from PIL import Image as PILImage
 
+class kernel:
+    def __init__(self, largura, altura, pixels):
+        self.largura = largura
+        self.altura = altura
+        self.pixels = pixels 
+    def get_pixel(self,x,y):
+        return self.pixels[(y * self.largura) + x]
+    
+
+    def get_meio(self):
+        meioX = self.largura//2
+        meioY = self.altura//2
+
+        return (meioX,meioY)
+
+
 
 # Classe Imagem:
 class Imagem:
@@ -33,11 +49,24 @@ class Imagem:
         self.altura = altura
         self.pixels = pixels #row-major order
 
-    def get_pixel(self,pixel):
-        return self.pixels[pixel]
+    def get_pixel(self,x,y):
+        #y = linha
+        #x = coluna
+        limiteHorizontal = self.largura-1
+        limiteVertical= self.altura-1
+        if (x<0):
+            x=0
+        elif (x > (limiteHorizontal)):
+            x = limiteHorizontal
+        if (y<0):
+            y=0
+        elif(y>limiteVertical):
+            y=limiteVertical
+        return self.pixels[(y * self.largura) + x]
 
-    def set_pixel(self, pixel,c):
-        self.pixels[pixel] = c
+
+    def set_pixel(self,x,y,c):
+        self.pixels[(y * self.largura) + x] = c
 
     def converte_pixel(self,coluna,linha):
         #para que eu consiga acessar realmente os pixels corretos, é preciso pular os pixels de acordo com a largura.
@@ -49,15 +78,35 @@ class Imagem:
         resultado = Imagem.nova(self.largura,self.altura)
         for x in range(resultado.largura):
             for y in range(resultado.altura):
-                pixel = self.converte_pixel(x,y)
-                cor = self.get_pixel(pixel)
+                cor = self.get_pixel(x,y)
                 nova_cor = func(cor)
-                resultado.set_pixel(pixel, nova_cor)
+                resultado.set_pixel(x,y, nova_cor)
         return resultado
+    
+    
 
     def invertida(self):
         return self.aplicar_por_pixel(lambda c: 255 - c)
 
+
+    def correlacao(self,kernel):
+        resultado = Imagem.nova(self.largura,self.altura)
+        DistanciaDoCentroX,DistanciaDoCentroY = kernel.get_meio() 
+
+
+        for x in range(resultado.largura):
+            for y in range(resultado.altura):
+                correlacao = 0
+
+                for i in range(kernel.largura):
+                    for j in range(kernel.altura):
+                        x1 = x - DistanciaDoCentroX + i
+                        y1 = y - DistanciaDoCentroY + j
+                        correlacao += self.get_pixel(x1,y1) * kernel.get_pixel(i,j)
+                resultado.set_pixel(x,y,correlacao)
+        return resultado
+
+        
     def borrada(self, n):
         raise NotImplementedError
 
@@ -66,6 +115,14 @@ class Imagem:
 
     def bordas(self):
         raise NotImplementedError
+
+
+
+
+
+
+
+
 
     # Abaixo deste ponto estão utilitários para carregar, salvar e mostrar
     # as imagens, bem como para a realização de testes. Você deve ler as funções
@@ -221,9 +278,14 @@ if __name__ == '__main__':
     # Diretório
 
 
-    im = Imagem.carregar(nome_arquivo='test_images/bluegill.png')
-    invertida = im.invertida() 
-    invertida.salvar('resultados/bluegill_invertida.png')
+    kn = kernel(3,3,[0,-0.07,0,-0.45,1.20,-0.25,0,-0.12,0])
+
+    im = Imagem(3,3,[80,53,99,129,127,148,175,174,193])
+    im.correlacao(kn)
+    print(im)
+    # im = Imagem.carregar(nome_arquivo='test_images/bluegill.png')
+    # invertida = im.invertida() 
+    # invertida.salvar('resultados/bluegill_invertida.png')
                          
     # pass
     # O código a seguir fará com que as janelas de Imagem.mostrar
