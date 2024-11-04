@@ -134,9 +134,9 @@ class Imagem:
 
         
     def borrada(self, n):
-        resultado = Imagem.nova(self.largura,self.altura)
         kern = kernel(n,n,kernel.n_por_n(n))
-        resultado.correlacao(kern)
+        resultado = self.correlacao(kern)
+        return resultado
 
 
 
@@ -308,11 +308,12 @@ if __name__ == '__main__':
     # Diretório
 
 
-    n = int(input("teste"))
-    
-    teste1 = kernel.n_por_n(n);
-    nk = kernel(n,n,teste1)
-    print(nk.altura,nk.largura,nk.pixels) 
+    im = Imagem.carregar(nome_arquivo='test_images/cat.png')
+    desfoque = im.borrada(5) 
+    desfoque.salvar('resultados/cat_desfoque.png')
+
+
+
     # kn = kernel(9,9,[0, 0, 0, 0, 0, 0, 0, 0, 0,
     #                 0, 0, 0, 0, 0, 0, 0, 0, 0,
     #                 1, 0, 0, 0, 0, 0, 0, 0, 0,
