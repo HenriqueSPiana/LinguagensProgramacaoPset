@@ -23,21 +23,41 @@ import math
 import base64
 import tkinter
 from io import BytesIO
+
 from PIL import Image as PILImage
+
+
 
 class kernel:
     def __init__(self, largura, altura, pixels):
         self.largura = largura
         self.altura = altura
         self.pixels = pixels 
+    
     def get_pixel(self,x,y):
+        limiteHorizontal = self.largura-1
+        limiteVertical= self.altura-1
+        if (x<0):
+            x=0
+        elif (x > (limiteHorizontal)):
+            x = limiteHorizontal
+        if (y<0):
+            y=0
+        elif(y>limiteVertical):
+            y=limiteVertical
         return self.pixels[(y * self.largura) + x]
     
+    def n_por_n(n):
+        k = []
+        for i in range(n):
+            for j in range(n):
+                k.append(1/n**2) 
+                # 1 pelo quadrado de N pq é o numero total de itens na lista, e com isso a soma de todos da 1, que é o necessario para esse blur
+        return k
 
     def get_meio(self):
         meioX = self.largura//2
         meioY = self.altura//2
-
         return (meioX,meioY)
 
 
@@ -103,12 +123,22 @@ class Imagem:
                         x1 = x - DistanciaDoCentroX + i
                         y1 = y - DistanciaDoCentroY + j
                         correlacao += self.get_pixel(x1,y1) * kernel.get_pixel(i,j)
-                resultado.set_pixel(x,y,correlacao)
+                #tratamento para corte de pixels, se extender dos valores suportados, o pixel é capado
+                if(correlacao<0):
+                    resultado.set_pixel(x,y,0)
+                elif(correlacao>255):
+                    resultado.set_pixel(x,y,255)
+                else:
+                    resultado.set_pixel(x,y,round(correlacao))
         return resultado
 
         
     def borrada(self, n):
-        raise NotImplementedError
+        resultado = Imagem.nova(self.largura,self.altura)
+        kern = kernel(n,n,kernel.n_por_n(n))
+        resultado.correlacao(kern)
+
+
 
     def focada(self, n):
         raise NotImplementedError
@@ -278,11 +308,29 @@ if __name__ == '__main__':
     # Diretório
 
 
-    kn = kernel(3,3,[0,-0.07,0,-0.45,1.20,-0.25,0,-0.12,0])
+    n = int(input("teste"))
+    
+    teste1 = kernel.n_por_n(n);
+    nk = kernel(n,n,teste1)
+    print(nk.altura,nk.largura,nk.pixels) 
+    # kn = kernel(9,9,[0, 0, 0, 0, 0, 0, 0, 0, 0,
+    #                 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    #                 1, 0, 0, 0, 0, 0, 0, 0, 0,
+    #                 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    #                 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    #                 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    #                 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    #                 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    #                 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    
+    # im = Imagem.carregar(nome_arquivo='test_images/pigbird.png')
+    # correlacao = im.correlacao(kn) 
+    # correlacao.salvar('resultados/pigbird_correlacao.png')
 
-    im = Imagem(3,3,[80,53,99,129,127,148,175,174,193])
-    im.correlacao(kn)
-    print(im)
+
+
+
+    
     # im = Imagem.carregar(nome_arquivo='test_images/bluegill.png')
     # invertida = im.invertida() 
     # invertida.salvar('resultados/bluegill_invertida.png')

@@ -131,6 +131,7 @@ class TestCorrelacao(unittest.TestCase):
                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         self.assertEqual(resultado, esperado)
 
+
 # Classe para os testes dos filtros:
 class TestFiltros(unittest.TestCase):
     def test_borrada(self):
