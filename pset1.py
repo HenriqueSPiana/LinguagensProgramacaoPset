@@ -141,7 +141,27 @@ class Imagem:
 
 
     def focada(self, n):
-        raise NotImplementedError
+        resultado = self.nova(self.largura,self.altura)
+
+        naoFocada = self.borrada(n)
+        for x in range(resultado.largura):
+            for y in range(resultado.altura):
+                novoPixel = 2*self.get_pixel(x,y) - naoFocada.get_pixel(x,y)
+                if(novoPixel<0):
+                    resultado.set_pixel(x,y,0)
+                elif(novoPixel>255):
+                    resultado.set_pixel(x,y,255)
+                else:
+                    resultado.set_pixel(x,y,round(novoPixel))
+        return resultado
+
+
+
+    
+
+
+
+
 
     def bordas(self):
         raise NotImplementedError
@@ -308,9 +328,12 @@ if __name__ == '__main__':
     # Diretório
 
 
-    im = Imagem.carregar(nome_arquivo='test_images/cat.png')
-    desfoque = im.borrada(5) 
-    desfoque.salvar('resultados/cat_desfoque.png')
+
+
+
+    # im = Imagem.carregar(nome_arquivo='test_images/cat.png')
+    # desfoque = im.borrada(5) 
+    # desfoque.salvar('resultados/cat_desfoque.png')
 
 
 
