@@ -35,16 +35,6 @@ class kernel:
         self.pixels = pixels 
     
     def get_pixel(self,x,y):
-        limiteHorizontal = self.largura-1
-        limiteVertical= self.altura-1
-        if (x<0):
-            x=0
-        elif (x > (limiteHorizontal)):
-            x = limiteHorizontal
-        if (y<0):
-            y=0
-        elif(y>limiteVertical):
-            y=limiteVertical
         return self.pixels[(y * self.largura) + x]
     
     def n_por_n(n):
@@ -86,12 +76,10 @@ class Imagem:
 
 
     def set_pixel(self,x,y,c):
-        self.pixels[(y * self.largura) + x] = c
-
-    def converte_pixel(self,coluna,linha):
         #para que eu consiga acessar realmente os pixels corretos, é preciso pular os pixels de acordo com a largura.
         # se está na linha 0 entao é vindo o valor da coluna somente
-        return (linha *self.largura) + coluna
+        self.pixels[(y * self.largura) + x] = c
+
         
     def aplicar_por_pixel(self, func):
         # foi necessario ajustes para que percorresse o vetor de forma correta
@@ -109,28 +97,40 @@ class Imagem:
         return self.aplicar_por_pixel(lambda c: 255 - c)
 
 
-    def correlacao(self,kernel):
-        resultado = Imagem.nova(self.largura,self.altura)
-        DistanciaDoCentroX,DistanciaDoCentroY = kernel.get_meio() 
+    def tramontinaCorteRapido(self):
+        #tratamento para corte de pixels, se extender dos valores suportados, o pixel é capado
+        for x in range(self.largura):
+            for y in range(self.altura):
+                pixelAtual = self.get_pixel(x, y)
+                if pixelAtual < 0:
+                    self.set_pixel(x, y, 0)
+                elif pixelAtual > 255:
+                    self.set_pixel(x, y, 255)
+                else:
+                    self.set_pixel(x, y, round(pixelAtual))
+        return self
+        
 
+
+    def correlacao(self, kernel):
+        resultado = Imagem.nova(self.largura, self.altura)
+        DistanciaDoCentroX, DistanciaDoCentroY = kernel.get_meio()
 
         for x in range(resultado.largura):
             for y in range(resultado.altura):
-                correlacao = 0
-
+                correlacao = 0  # Inicializa a correlação para o pixel (x, y)
+                
+                # Percorre cada elemento do kernel
                 for i in range(kernel.largura):
                     for j in range(kernel.altura):
                         x1 = x - DistanciaDoCentroX + i
                         y1 = y - DistanciaDoCentroY + j
-                        correlacao += self.get_pixel(x1,y1) * kernel.get_pixel(i,j)
-                #tratamento para corte de pixels, se extender dos valores suportados, o pixel é capado
-                if(correlacao<0):
-                    resultado.set_pixel(x,y,0)
-                elif(correlacao>255):
-                    resultado.set_pixel(x,y,255)
-                else:
-                    resultado.set_pixel(x,y,round(correlacao))
-        return resultado
+                        correlacao += self.get_pixel(x1, y1) * kernel.get_pixel(i, j)
+                
+                # Define o valor de correlacao após o cálculo completo para (x, y)
+                resultado.set_pixel(x, y, correlacao)
+        
+        return resultado.tramontinaCorteRapido()
 
         
     def borrada(self, n):
@@ -146,13 +146,8 @@ class Imagem:
         for x in range(resultado.largura):
             for y in range(resultado.altura):
                 novoPixel = 2*self.get_pixel(x,y) - naoFocada.get_pixel(x,y)
-                if(novoPixel<0):
-                    resultado.set_pixel(x,y,0)
-                elif(novoPixel>255):
-                    resultado.set_pixel(x,y,255)
-                else:
-                    resultado.set_pixel(x,y,round(novoPixel))
-        return resultado
+                resultado.set_pixel(x,y,novoPixel)
+        return resultado.tramontinaCorteRapido()
 
     def bordas(self):
         raise NotImplementedError
