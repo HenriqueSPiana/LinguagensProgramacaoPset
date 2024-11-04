@@ -142,7 +142,6 @@ class Imagem:
 
     def focada(self, n):
         resultado = self.nova(self.largura,self.altura)
-
         naoFocada = self.borrada(n)
         for x in range(resultado.largura):
             for y in range(resultado.altura):
@@ -154,14 +153,6 @@ class Imagem:
                 else:
                     resultado.set_pixel(x,y,round(novoPixel))
         return resultado
-
-
-
-    
-
-
-
-
 
     def bordas(self):
         raise NotImplementedError
@@ -326,6 +317,12 @@ if __name__ == '__main__':
     # sendo executados. Este é um bom lugar para gerar imagens, etc.
 
     # Diretório
+
+
+    # im = Imagem.carregar(nome_arquivo='test_images/python.png')
+    # focada = im.focada(11) 
+    # focada.salvar('resultados/teste_focado.png')
+
 
 
 
