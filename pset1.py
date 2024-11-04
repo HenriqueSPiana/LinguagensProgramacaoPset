@@ -91,6 +91,15 @@ class Imagem:
                 resultado.set_pixel(x,y, nova_cor)
         return resultado
     
+
+    def aplicar_naquele_pixel(self, func):
+        resultado = Imagem.nova(self.largura,self.altura)
+        for x in range(resultado.largura):
+            for y in range(resultado.altura):
+                valorPixel = self.get_pixel(x,y)
+                novaPixel = func(valorPixel,x,y)
+                resultado.set_pixel(x,y, novaPixel)
+        return resultado
     
 
     def invertida(self):
@@ -130,13 +139,13 @@ class Imagem:
                 # Define o valor de correlacao após o cálculo completo para (x, y)
                 resultado.set_pixel(x, y, correlacao)
         
-        return resultado.tramontinaCorteRapido()
+        return resultado
 
         
     def borrada(self, n):
         kern = kernel(n,n,kernel.n_por_n(n))
         resultado = self.correlacao(kern)
-        return resultado
+        return resultado.tramontinaCorteRapido()
 
 
 
@@ -150,7 +159,20 @@ class Imagem:
         return resultado.tramontinaCorteRapido()
 
     def bordas(self):
-        raise NotImplementedError
+        resultado = Imagem.nova(self.largura, self.altura)
+
+        kernel_x =kernel(3,3,[-1, 0, 1,-2, 0, 2,-1, 0, 1])
+        kernel_y =kernel(3,3,[-1, -2, -1,0, 0, 0,1, 2, 1])
+
+        imagem_x = self.correlacao(kernel_x)
+        imagem_y = self.correlacao(kernel_y)
+
+        resultado = self.aplicar_naquele_pixel(
+        lambda c, x, y: math.sqrt(imagem_x.get_pixel(x, y) ** 2 + imagem_y.get_pixel(x, y) ** 2))
+        
+        resultado = resultado.tramontinaCorteRapido()
+        return resultado
+    
 
 
 
